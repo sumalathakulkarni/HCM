@@ -74,14 +74,14 @@
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Edit" name="Edit" id="Edit"><i class="bi bi-pencil"></i></a>'
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Edit" name="Edit" id="Edit"><i class="bi bi-pencil"></i></a>'
                             },
                             {
                                 "targets": [3],
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
                             }
                         ]
                     });
@@ -132,13 +132,18 @@
                         });
                     });
 
-                    $('#tblDepartments').find('a').click(function (e) {
+                    $("#tblDepartments").on("click", ".btn-row", function (e) {
+                    //$('#tblDepartments').find('a').click(function (e) {
 
                         var action = $(this).attr("Name");
 
                         var tr = $(this).closest('tr');
                         var row = tblDepartments.rows(tr);
                         var dept = row.data()[0];
+                        // var deptID = row.data()[0].departmentID;
+                        // var deptName = row.data()[0].departmentName;
+                        // alert(deptID);
+                        // alert(deptName);
 
                         if (action == "Edit") {
                             e.preventDefault();
@@ -187,10 +192,11 @@
                             });
                         }
                         else if (action == "Delete") {
+                            
                             e.preventDefault();
-                            debugger;
                             $("#dialog-confirm").html("<i style='color: red;' class='bi bi-exclamation-circle-fill'></i>&nbsp;&nbsp;Are you sure to delete the selected Department?");
                             $("#dialog-confirm").dialog({
+                                
                                 title: "Delete " + dept.departmentName,
                                 resizable: false,
                                 height: "auto",
@@ -200,7 +206,7 @@
                                     "Yes": function () {
                                         $.ajax({
                                             type: "POST",
-                                            url: "/Department/DeleteDepartment?departmentId=" + dept.DepartmentID,
+                                            url: "/Department/DeleteDepartment?departmentId=" + dept.departmentID,
                                             success: function (response) {
                                                 $("#dialog-confirm").dialog("close");
                                                 LoadDepartmentData();

@@ -51,7 +51,6 @@
 
                 success: function (data) {
 
-                    debugger;
                     tblRoles = $("#tblRoles").DataTable({
                         "data": data,
                         scrollY: '400px',
@@ -75,14 +74,14 @@
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Edit" name="Edit" id="Edit"><i class="bi bi-pencil"></i></a>'
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Edit" name="Edit" id="Edit"><i class="bi bi-pencil"></i></a>'
                             },
                             {
                                 "targets": [3],
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
                             }
                         ]
                     });
@@ -133,20 +132,23 @@
                         });
                     });
 
-                    $('#tblRoles').find('a').click(function (e) {
+                    $("#tblRoles").on("click", ".btn-row", function (e) {
+                    //$('#tblRoles').find('a').click(function (e) {
 
                         var action = $(this).attr("Name");
 
                         var tr = $(this).closest('tr');
                         var row = tblRoles.rows(tr);
-                        var dept = row.data()[0];
+                        var role = row.data()[0];
+                        var roleID = row.data()[0].roleID;
+                        var roleName = row.data()[0].roleName;
 
                         if (action == "Edit") {
                             e.preventDefault();
                             $.ajax({
                                 type: "POST",
                                 url: "/Role/EditRole",
-                                data: dept,
+                                data: role,
                                 success: function (response) {
                                     $('#dialog-view').html(response);
                                     $("#dialog-view").dialog({
@@ -188,11 +190,12 @@
                             });
                         }
                         else if (action == "Delete") {
+                            
                             e.preventDefault();
 
                             $("#dialog-confirm").html("<i style='color: red;' class='bi bi-exclamation-circle-fill'></i>&nbsp;&nbsp;Are you sure to delete the selected Role?");
                             $("#dialog-confirm").dialog({
-                                title: "Delete " + dept.RoleName,
+                                title: "Delete the role '" + roleName + "'",
                                 resizable: false,
                                 height: "auto",
                                 width: 400,
@@ -201,11 +204,11 @@
                                     "Yes": function () {
                                         $.ajax({
                                             type: "POST",
-                                            url: "/Role/DeleteRole?RoleId=" + dept.RoleID,
+                                            url: "/Role/DeleteRole?RoleId=" + roleID,
                                             success: function (response) {
                                                 $("#dialog-confirm").dialog("close");
                                                 LoadRoleData();
-                                                toastr.success('Role ' + dept.RoleName + ' is Deleted', 'Confirmation');
+                                                toastr.success('Role ' + roleName + ' is Deleted', 'Confirmation');
                                             },
                                             failure: function (response) {
                                                 alert(response.responseText);

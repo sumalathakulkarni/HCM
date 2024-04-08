@@ -83,11 +83,11 @@ namespace HCM.Services
 
             var parameters = new Dictionary<string, object>
             {
-                { "DepartmentID", departmentID }
+                { "DeptID", departmentID }
             };
 
             var con = GetDatabaseConnection();
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.DeleteEmployee, parameters);
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.DeleteDepartment, parameters);
             cmd.Connection = con;
 
             try

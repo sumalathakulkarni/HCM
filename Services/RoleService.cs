@@ -86,7 +86,7 @@ namespace HCM.Services
             };
 
             var con = GetDatabaseConnection();
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.DeleteEmployee, parameters);
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.DeleteRole, parameters);
             cmd.Connection = con;
 
             try

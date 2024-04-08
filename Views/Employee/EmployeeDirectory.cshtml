@@ -108,14 +108,14 @@
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Employee Details" name="ViewEmployee" id="viewDViewEmployeeetails"><i class="bi bi-file-check"></i></a>'
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Employee Details" name="ViewEmployee" id="viewDViewEmployeeetails"><i class="bi bi-file-check"></i></a>'
                             },
                             {
                                 "targets": [8],
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Employee Benefits" name="ViewBenefits" id="ViewBenefits"><i class="bi bi-list-task"></i></a>'
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Employee Benefits" name="ViewBenefits" id="ViewBenefits"><i class="bi bi-list-task"></i></a>'
                             },
                             {
                                 "targets": [9],
@@ -134,13 +134,13 @@
                                 "data": null,
                                 "orderable": false,
                                 "searchable": false,
-                                "defaultContent": '<a href="#" class="btn btn-sm" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
-
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
                             }
                         ]
                     });
 
-                    $('#tblEmps').find('a').click(function (e) {
+                    $("#tblEmps").on("click", ".btn-row", function (e) {
+                    //$('#tblEmps').find('a').click(function (e) {
 
                         var action = $(this).attr("Name");
                         var tr = $(this).closest('tr');
@@ -178,6 +178,7 @@
                                 }
                             });
                         } else if (action == "ViewBenefits") {
+                            alert('View Benefits');
                             e.preventDefault();
                             $.ajax({
                                 type: "GET",

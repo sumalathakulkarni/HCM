@@ -48,12 +48,12 @@ namespace HCM.Controllers
 
         public PartialViewResult ViewEmployee([FromQuery] int employeeId)
         {
-            var empDetials = _employeeService.GetEmployeeByID(employeeId);
+            var empDetails = _employeeService.GetEmployeeByID(employeeId);
 
             return new PartialViewResult
             {
                 ViewName = "ViewEmployee",
-                ViewData = new ViewDataDictionary<EmployeeModel>(ViewData, empDetials)
+                ViewData = new ViewDataDictionary<EmployeeModel>(ViewData, empDetails)
             };
         }
         public PartialViewResult ViewBenefits([FromQuery] int employeeId)
