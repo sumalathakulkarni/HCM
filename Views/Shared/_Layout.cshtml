@@ -1,0 +1,173 @@
+﻿@using System.Security.Claims;
+
+@{
+    var userEmployeeID = 0;
+    var UserRole = string.Empty;
+
+    var strEmployeeId = Context.User.FindFirstValue(ClaimTypes.SerialNumber);
+    UserRole = Context.User.FindFirstValue(ClaimTypes.Role);
+
+    if (strEmployeeId != null)
+    {
+        userEmployeeID = int.Parse(strEmployeeId);
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HCM</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables.net-dt/css/jquery.datatables.min.css" />
+    <link rel="stylesheet" href="~/lib/jqueryui/themes/base/jquery-ui.min.css" />
+    <link rel="stylesheet" href="~/lib/toastr.js/toastr.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/HCM.styles.css" asp-append-version="true" />
+
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="EmployeeDirectory">Employee Directory</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Roles">Roles</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Departments">Departments</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Skills</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Privacy</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @Context.User.Identity.Name
+                            </a>
+                            <input type="hidden" id="hdnEmployeeID" value="@userEmployeeID" />
+                            <ul class="dropdown-menu">
+                                <li><a href="/Employee/EditEmployee?employeeID=@userEmployeeID" class="btn btn-sm" role="button" title="Edit Details" name="Edit" id="Edit"><i class="bi bi-pencil"></i>&nbsp;&nbsp;Profile</a></li>
+                                <li><a href="#" class="btn btn-sm" role="button" title="Choose Benefits" name="btnEditBenefits" id="btnEditBenefits"><i class="bi bi-list-task"></i>&nbsp;&nbsp;Benefits</a></li>
+                                <li><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+    <div id="dialog-view" title="Model View" style="display: none"></div>
+
+    <div id="dialog-confirm" title="Confirmation Dialog" style="display:none" />
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2024 - HCM - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/datatables.net/jquery.datatables.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/toastr.js/toastr.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(function () {
+
+            var bootstrapButton = $.fn.button.noConflict()
+            $.fn.bootstrapBtn = bootstrapButton;
+
+            $('#btnEditBenefits').click(function (e) {
+                var employeeID = $("#hdnEmployeeID").val();
+                e.preventDefault();
+                
+                $.ajax({
+                    type: "GET",
+                    url: "/Employee/EditBenefits?employeeID=" + employeeID,
+                    success: function (response) {
+                        $('#dialog-view').html(response);
+                        $("#dialog-view").dialog({
+                            title: "Edit Benefits",
+                            resizable: false,
+                            height: "auto",
+                            width: 400,
+                            modal: true
+                        });
+
+                        $('#btnSaveBenifits').click(function (event) {
+                            //var status = ($("#status").attr("checked") ? 'checked' : 'unchecked');
+                            //$("#checkbox-1").is(":checked")
+                            //$("#checkbox-1").prop("checked")
+
+                            var EmployeeMedical = $("#EmployeeMedical").prop("checked");
+                            var EmployeeVision = $("#EmployeeVision").prop("checked");
+                            var EmployeeDental = $("#EmployeeDental").prop("checked");
+                            var EmployeeLife = $("#EmployeeLife").prop("checked");
+                            var Employee401K = $("#Employee401K").prop("checked");
+
+                            event.preventDefault();
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/Employee/SaveBenefits",
+                                data: {
+                                    EmployeeID: employeeID
+                                    , EmployeeMedical: EmployeeMedical
+                                    , EmployeeVision: EmployeeVision
+                                    , EmployeeDental: EmployeeDental
+                                    , EmployeeLife: EmployeeLife
+                                    , Employee401K: Employee401K
+                                },
+
+                                success: function (data) {
+                                    $("#dialog-view").dialog("close");
+                                    LoadDepartmentData();
+                                    toastr.success('Selected benifits are updated', 'Confirmation');
+                                },
+                                error: function (ex) {
+                                    alert('in error');
+                                }
+                            })
+                        })
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            });
+        });
+    });
+</script>

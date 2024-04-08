@@ -1,0 +1,256 @@
+﻿<div id="dialog" title="Basic dialog" tyle="display: none">
+</div>
+
+
+<h1>Manage Users</h1>
+<a asp-controller="User" asp-action="AddNewUser">Add User</a>
+<table id="tblUsers">
+    <thead>
+        <tr>
+            <th></th>
+            <th></th>
+            <th>
+                User ID
+            </th>
+            <th>
+                First Name
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                Age
+            </th>
+            <th>
+                Country
+            </th>
+        </tr>
+    </thead>
+</table>
+
+@section scripts {
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetAllUsers", "User")',
+                data: "[]",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    tblUsers = $('#tblUsers').DataTable({
+                        "data": data,
+
+                        order: [[1, 'asc']],
+
+                        columnDefs: [
+                            {
+                                "targets": 0,
+                                "class": 'details-control',
+                                "defaultContent": ''
+                            },
+
+                            {
+                                "targets": 1,
+                                "data": null,
+                                "defaultContent": '<a href="#" title="View Details" name="View"><i class="fa-solid fa-eye"></i></a>&nbsp;<a href="#" title="Edit Details" name="Edit"><i class="fa-solid fa-pen-to-square"></i></a>&nbsp;<a href="#" title="Delete" name="Delete"><i class="fa-solid fa-trash-can"></i></a>&nbsp;',
+                                "orderable": false,
+                                "searchable": false,
+                            },
+                            {
+                                "targets": 2,
+                                "data": "userID"
+                            },
+                            {
+                                "targets": 3,
+                                "data": "firstName"
+                            },
+                            {
+                                "targets": 4,
+                                "data": "lastName"
+                            },
+                            {
+                                "targets": 5,
+                                "data": "age"
+                            },
+                            {
+                                "targets": 6,
+                                "data": "country"
+                            }
+
+                        ],
+                        scrollY: 400,
+                    });
+
+                    $.fn.dataTable.ext.search.push(
+                        function (settings, searchData, index, rowData, counter) {
+                            debugger;
+                            //if ( rowData) {
+                            //    return false;
+                            //} else {
+                            //    return true;
+                            //}
+                        }
+                    );
+
+                    $('#tblUsers').find('a').click(function () {
+
+                        var userID = parseInt($(this).parents('tr').find('td:nth-child(2)').text());
+                        var action = $(this).attr("Name");
+                        if (action == "View") {
+                            $.ajax({
+                                type: "POST",
+                                url: "/User/ViewUserDetails?UserId" + userID,
+                                success: function (response) {
+                                    $('#dialog').html(response);
+                                    ShowUserDetailsDialog("dialog", "View User Details");
+                                },
+                                failure: function (response) {
+                                    alert(response.responseText);
+                                },
+                                error: function (response) {
+                                    alert(response.responseText);
+                                }
+                            });
+                        }
+                        else if (action == "Edit") {
+                            $.ajax({
+                                type: "POST",
+                                url: "/User/EditUserDetails?UserId=" + userID,
+                                success: function (response) {
+                                    $('#dialog').html(response);
+                                    ShowUserDetailsDialog("dialog", "Edit User Details");
+
+                                    $("#Country").autocomplete({
+                                        source: function (request, response) {
+                                            $.ajax({
+                                                url: '@Url.Action("SearchCountry", "User")',
+                                                headers: {
+                                                    "RequestVerificationToken":
+                                                        $('input[name="__RequestVerificationToken"]').val()
+                                                },
+                                                data: { "term": request.term },
+                                                dataType: "json",
+                                                success: function (data) {
+                                                    response($.map(data, function (item) {
+                                                        return item;
+                                                    }))
+                                                },
+                                                error: function (xhr, textStatus, error) {
+                                                    alert(xhr.statusText);
+                                                },
+                                                failure: function (response) {
+                                                    alert("failure " + response.responseText);
+                                                }
+                                            });
+
+                                        },
+                                        minLength: 3
+                                    });
+
+                                    $("#FirstName").autocomplete({
+                                        source: function (request, response) {
+                                            $.ajax({
+                                                url: '@Url.Action("SearchAdUser", "User")',
+                                                headers: {
+                                                    "RequestVerificationToken":
+                                                        $('input[name="__RequestVerificationToken"]').val()
+                                                },
+                                                data: { "term": request.term },
+                                                dataType: "json",
+                                                success: function (data) {
+                                                    response($.map(data, function (item) {
+                                                        return item;
+                                                    }))
+                                                },
+                                                error: function (xhr, textStatus, error) {
+                                                    alert(xhr.statusText);
+                                                },
+                                                failure: function (response) {
+                                                    alert("failure " + response.responseText);
+                                                }
+                                            });
+                                        },
+                                        minLength: 3
+                                    }).autocomplete("instance")._renderItem = function (ul, item) {
+                                        return $("<li>")
+                                            .append("<div>" + item.displayName + "<br>email:" + item.email + "</div>")
+                                            .appendTo(ul);
+                                    };
+                                },
+                                failure: function (response) {
+                                    alert(response.responseText);
+                                },
+                                error: function (response) {
+                                    alert(response.responseText);
+                                }
+                            });
+                        }
+                        else {
+                            alert(action + " " + userID)
+                        }
+
+                        return false;
+                    });
+
+                    $('#tblUsers tbody').on('click', 'td.details-control', function () {
+                        var tr = $(this).closest('tr');
+                        var row = tblUsers.row(tr);
+
+                        if (row.child.isShown()) {
+                            // This row is already open - close it
+                            $('div.slider', row.child()).slideUp(function () {
+                                row.child.hide();
+                                tr.removeClass('shown');
+                            });
+                        }
+                        else {
+                            // Open this row
+                            row.child(format(row.data()), 'no-padding').show();
+                            tr.addClass('shown');
+                            $('div.slider', row.child()).slideDown();
+                        }
+                    });
+                }
+            });
+        });
+
+        function format(userDetails) {
+            // `d` is the original data object for the row
+            return '<div class="slider">' +
+                '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                '<tr>' +
+                '<td>Document</td>' +
+                '<td>Pages</td>' +
+                '<td>View</td>' +
+                '</tr>' +
+                userDetails.data.map(function (doc) {
+                    return '<tr>' +
+                        '<td>' + doc.documentName + '</td>' +
+                        '<td>' + doc.numberOfPages + '</td>' +
+                        '<td><a href="' + doc.url + '" target="_blank">View Document</a></td>' +
+                        '</tr>';
+                }).join('') +
+                '</table>' +
+                '</div>';
+        }
+
+        ShowUserDetailsDialog = function (containerId, title) {
+            $("#" + containerId).dialog(
+                {
+                    title: title,
+                    height: 300,
+                    width: 500,
+                    modal: true,
+                    position: {
+                        at: "center"
+                    }
+                });
+        }
+
+
+    </script>
+}

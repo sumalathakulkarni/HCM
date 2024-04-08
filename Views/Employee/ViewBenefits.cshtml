@@ -1,0 +1,30 @@
+﻿@model EmployeeBenefitsModel
+
+@{
+    ViewData["Title"] = "View Benefits";
+}
+
+<div class="container-fluid">
+<form id="myForm" class="row g-3">
+        <div class="col-md-6">
+            <label for="Medical" class="form-label">Medical</label>
+            @Html.CheckBoxFor(m => m.EmployeeMedical, new { @checked = "checked", @disabled = "disabled" })
+        </div>
+        <div class="col-md-6">
+            <label for="Vision" class="form-label">Vision</label>
+            @Html.CheckBoxFor(m => m.EmployeeVision, new { @checked = "checked", @disabled = "disabled" })
+        </div>
+        <div class="col-md-6">
+            <label for="Dental" class="form-label">Dental</label>
+            @Html.CheckBoxFor(m => m.EmployeeDental, new { @checked = "checked", @disabled = "disabled" })
+        </div>
+        <div class="col-md-6">
+            <label for="Life" class="form-label">Dental</label>
+            @Html.CheckBoxFor(m => m.EmployeeLife, new { @checked = "checked", @disabled = "disabled" })
+        </div>
+        <div class="col-md-6">
+            <label for="401K" class="form-label">Dental</label>
+            @Html.CheckBoxFor(m => m.Employee401K, new { @checked = "checked", @disabled = "disabled" })
+        </div>
+    </form>
+</div>

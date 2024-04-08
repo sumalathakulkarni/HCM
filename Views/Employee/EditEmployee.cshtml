@@ -1,0 +1,142 @@
+﻿@model EmployeeModel
+@{
+    ViewData["Title"] = "Edit Employee";
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Employee" asp-action="EmployeeDirectory">Employee Directory</a></li>
+        <li class="breadcrumb-item active">Edit Employee</li>
+    </ol>
+</nav>
+
+<div class="container-fluid">
+    <div class="alert alert-success" role="alert">
+        Edit Employee Details
+    </div>
+</div>
+<div class="container-fluid">
+    <form id="empForm" class="row g-3 needs-validation">
+        <div class="col-md-4">
+            <label for="FirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="FirstName" name="FirstName" value=" @Model.FirstName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="MiddleName" class="form-label">Middle Name</label>
+            <input type="text" class="form-control" id="MiddleName" name="MiddleName" value="@Model.MiddleName" />
+        </div>
+        <div class="col-md-4">
+            <label for="LastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="LastName" name="LastName" value="@Model.LastName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-6">
+            <label for="EmailAddress" class="form-label">Employee ID</label>
+            <input type="email" class="form-control" id="EmployeeID" name="EmployeeID" value="@Model.EmployeeID" readonly style="background-color:lightgray"/>
+        </div>
+        <div class="col-md-6">
+            <label for="EmailAddress" class="form-label">Email Address</label>
+            <input type="email" class="form-control" id="EmailAddress" name="EmailAddress" value="@Model.EmailAddress" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="DepartmentID" class="form-label">Department</label>
+            <input type="hidden" id="hdnDepartmentID" value="@Model.DepartmentID" />
+            <select id="DepartmentID" class="form-select" name="DepartmentID">
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="RoleID" class="form-label">Role</label>
+            <input type="hidden" id="hdnRoleID" value="@Model.RoleID" />
+            <select id="RoleID" class="form-select" name="RoleID">
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="ManagerID" class="form-label">Manager</label>
+            <input type="hidden" id="hdnManagerID" value="@Model.ManagerID" />
+            <select id="ManagerID" class="form-select" name="ManagerID">
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label for="Salary" class="form-label">Annual Salary</label>
+            <input type="number" class="form-control" id="Salary" name="Salary" required>
+        </div>
+        <div class="col-md-6">
+            <label for="BiWeeklyPayAmount" class="form-label">Bi-Weekly Pay Amount</label>
+            <input type="number" class="form-control" id="BiWeeklyPayAmount" name="BiWeeklyPayAmount" />
+        </div>
+        <div class="col-md-4">
+            <label for="BankName" class="form-label">Bank Name</label>
+            <input type="text" class="form-control" id="BankName" name="BankName" />
+        </div>
+        <div class="col-md-4">
+            <label for="AccountNumber" class="form-label">Account Number</label>
+            <input type="text" class="form-control" id="AccountNumber" name="AccountNumber" />
+        </div>
+        <div class="col-md-4">
+            <label for="RoutingNumber" class="form-label">Routing Number</label>
+            <input type="text" class="form-control" id="RoutingNumber" name="RoutingNumber" />
+        </div>
+        <div class="col-12 align-content-center">
+            <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;&nbsp;Save</button>
+        </div>
+    </form>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(function () {
+                var bootstrapButton = $.fn.button.noConflict()
+                $.fn.bootstrapBtn = bootstrapButton;
+                var controller = 'Employee';
+
+                LoadDropdown('DepartmentID', controller, 'GetAllDepartments');
+                LoadDropdown('ManagerID', controller, 'GetallManagers');
+                LoadDropdown('RoleID', controller, 'GetAllRoles');
+                var data = $("#empForm").serialize();
+
+                $("form").on("submit", function (event) {
+                    event.preventDefault();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Employee/SaveEmployee",
+                        data: $("#empForm").serialize(),
+
+                        success: function (data) {
+                            window.location.href = '@Url.Action("EmployeeDirectory", "Employee")'
+                            toastr.success('Employee ' + $("#FirstName").val() + " " + $("#LastName").val() + ' updated successfully!', 'Confirmation');
+                        },
+                        error: function (ex) {
+                            alert('in error');
+                        }
+                    });
+                });
+            });
+        });
+
+        function LoadDropdown(id, controller, operation) {
+
+            $.ajax({
+                "type": "GET",
+                "url": "/" + controller + "/" + operation,
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+
+                success: function (data) {
+                    $('#' + id).empty();
+                    $('#' + id).append($('<option>').text('---').attr('value', "-1"));
+
+                    $.each(data, function (index, item) {
+                        $('#' + id).append($('<option>').text(item.text).attr('value', item.value));
+                    });
+                    var selectedValue = $('#hdn' + id).val();
+                    $('#' + id).val(selectedValue);
+                },
+                error: function (ex) {
+                    alert('in error');
+                }
+            });
+        }
+    </script>
+}

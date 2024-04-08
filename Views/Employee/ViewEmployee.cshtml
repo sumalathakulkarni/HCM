@@ -1,0 +1,61 @@
+﻿@model EmployeeModel
+@{
+    ViewData["Title"] = "View Employee";
+}
+
+<div class="container-fluid">
+    <form id="myForm" class="row g-3 needs-validation">
+        <div class="col-md-4">
+            <label for="FirstName" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="FirstName" name="FirstName" value="@Model.FirstName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="MiddleName" class="form-label">Middle Name</label>
+            <input type="text" class="form-control" id="MiddleName" name="MiddleName" value="@Model.MiddleName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="LastName" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="LastName" name="LastName" value="@Model.LastName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-6">
+            <label for="JoinDate" class="form-label">Join Date</label>
+            <input type="text" class="form-control" id="JoinDate" name="JoinDate" value="@Model.JoinDate.ToShortDateString()" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-6">
+            <label for="EmailAddress" class="form-label">Email Address</label>
+            <input type="text" class="form-control" id="EmailAddress" name="EmailAddress" value="@Model.EmailAddress" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="DepartmentName" class="form-label">Department</label>
+            <input type="text" class="form-control" id="DepartmentName" name="DepartmentName" value="@Model.DepartmentName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="RoleName" class="form-label">Role</label>
+            <input type="text" class="form-control" id="RoleName" name="RoleName" value="@Model.RoleName" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="Manager" class="form-label">Manager</label>
+            <input type="text" class="form-control" id="Manager" name="Manager" value="@Model.Manager" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-6">
+            <label for="Salary" class="form-label">Annual Salary</label>
+            <input type="text" class="form-control" id="Salary" name="Salary" value=@Model.Salary readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-6">
+            <label for="BiWeeklyPayAmount" class="form-label">Bi-Weekly Pay Amount</label>
+            <input type="text" class="form-control" id="BiWeeklyPayAmount" name="BiWeeklyPayAmount" value=@Model.BiWeeklyPayAmount readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="BankName" class="form-label">Bank Name</label>
+            <input type="text" class="form-control" id="BankName" name="BankName" value=@Model.BankName readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="AccountNumber" class="form-label">Account Number</label>
+            <input type="text" class="form-control" id="AccountNumber" name="AccountNumber" value=@Model.AccountNumber readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-4">
+            <label for="RoutingNumber" class="form-label">Routing Number</label>
+            <input type="text" class="form-control" id="RoutingNumber" name="RoutingNumber" value=@Model.RoutingNumber readonly style="background-color:lightgray" />
+        </div>
+    </form>
+</div>
