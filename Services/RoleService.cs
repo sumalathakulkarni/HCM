@@ -23,12 +23,12 @@ namespace HCM.Services
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    RoleModel deapartment = new RoleModel()
+                    RoleModel department = new RoleModel()
                     {
                         RoleID = reader.GetInt32("RoleID"),
                         RoleName = reader.GetString("RoleName"),
                     };
-                    Roles.Add(deapartment);
+                    Roles.Add(department);
                 }
                 reader.Close();
             }

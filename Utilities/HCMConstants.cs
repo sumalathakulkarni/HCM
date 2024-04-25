@@ -32,5 +32,14 @@
         public static string DeleteRole = "DeleteRole";
         public static string AddRole = "AddNewRole";
         public static string UpdateRoleName = "UpdateRoleName";
+
+        public static string GetAllSkills = "GetAllSkills";
+        public static string GetEmployeeSkills = "GetEmployeeSkills";
+        public static string AddEmployeeSkill = "AddEmployeeSkill";
+
+        public static string GetEmployeePTODetails = "GetEmployeePTODetails";
+        public static string ApplyPTO = "ApplyPTO";
+
+
     }
 }

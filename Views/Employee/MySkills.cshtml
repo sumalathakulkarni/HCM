@@ -1,0 +1,23 @@
+﻿@model SkillsModel
+
+@{
+    ViewData["Title"] = "Skills";
+}
+
+<div class="container-fluid">
+    <form id="skillsForm" class="row g-3 needs-validation">
+        <div class="col-md-4">
+            @Html.ListBoxFor(m => m.AllSkills, new MultiSelectList(@Model.AllSkills, "Value", "Text"), null)
+        </div>
+        <div class="col-md-4 align-middle btn-group-vertical">
+            <button type="button" id="btnAddSkill" class="btn btn-primary">Add <i class="bi bi-chevron-right"></i></button>
+            <button type="button" id="btnRemoveSkill" class="btn btn-primary"><i class="bi bi-chevron-left"></i> Remove</button>
+        </div>
+        <div class="col-md-4">
+            @Html.ListBoxFor(m => m.EmployeeSkills, new MultiSelectList(@Model.EmployeeSkills, "Value", "Text"), null)
+        </div>
+        <div class="col-12 align-content-center d-flex justify-content-center">
+            <button type="button" id="btnSaveSkills" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;&nbsp;Save</button>
+        </div>
+    </form>
+</div>

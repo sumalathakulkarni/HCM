@@ -1,0 +1,237 @@
+﻿@{
+    ViewData["Title"] = "Roles";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item active">Roles</li>
+    </ol>
+</nav>
+<div class="container-fluid">
+    <div class="alert alert-success" role="alert">
+        <button type="button" id="btnAddRole" class="btn btn-primary"><i class="bi bi-plus-square-fill"></i>&nbsp;&nbsp;New Role</button>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div>
+        <table id="tblRoles" class="table table-striped table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Role ID</th>
+                    <th>Role Name</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $(function () {
+                var bootstrapButton = $.fn.button.noConflict()
+                $.fn.bootstrapBtn = bootstrapButton;
+                LoadRoleData();
+            });
+        });
+
+        function LoadRoleData() {
+
+            $.ajax({
+                "type": "GET",
+                "url": "/Role/GetAllRoles",
+                contentType: "application/json; charset=utf-8",
+                datatype: "json",
+
+                success: function (data) {
+
+                    tblRoles = $("#tblRoles").DataTable({
+                        "data": data,
+                        scrollY: '400px',
+                        scrollCollapse: true,
+                        destroy: true,
+
+                        "columnDefs": [
+                            {
+                                "targets": [0],
+                                "data": "roleID",
+                                "searchable": false,
+                                "orderable": false,
+                            },
+                            {
+                                "targets": [1],
+                                "data": "roleName",
+                                "className": "dt-left"
+                            },
+                            {
+                                "targets": [2],
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Edit" name="Edit" id="Edit"><i class="bi bi-pencil"></i></a>'
+                            },
+                            {
+                                "targets": [3],
+                                "data": null,
+                                "orderable": false,
+                                "searchable": false,
+                                "defaultContent": '<a href="#" class="btn btn-sm btn-row" role="button" title="Delete" name="Delete" id="Delete"><i class="bi bi-trash"></i></a>'
+                            }
+                        ]
+                    });
+
+                    $('#btnAddRole').click(function (e) {
+                        
+                        e.preventDefault();
+                        $.ajax({
+                            type: "GET",
+                            url: "/Role/AddRole",
+                            success: function (response) {
+                                $('#dialog-view').html(response);
+                                $("#dialog-view").dialog({
+                                    title: "Add Role",
+                                    resizable: false,
+                                    height: "auto",
+                                    width: 400,
+                                    modal: true
+                                });
+
+                                $('#btnSaveNewRole').click(function (event) {
+
+                                    event.preventDefault();
+                                    var RoleID = 0;
+                                    var RoleName = $("#RoleName").val();
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Role/SaveRole",
+                                        data: { RoleID: RoleID, RoleName: RoleName },
+
+                                        success: function (data) {
+                                            $("#dialog").dialog("close");
+                                            LoadRoleData();
+                                            toastr.success('Role ' + RoleName + ' is Created', 'Confirmation');
+                                        },
+                                        error: function (ex) {
+                                            alert('in error');
+                                        }
+                                    })
+                                })
+                            },
+                            failure: function (response) {
+                                alert(response.responseText);
+                            },
+                            error: function (response) {
+                                alert(response.responseText);
+                            }
+                        });
+                    });
+
+                    $("#tblRoles").on("click", ".btn-row", function (e) {
+                    //$('#tblRoles').find('a').click(function (e) {
+
+                        var action = $(this).attr("Name");
+
+                        var tr = $(this).closest('tr');
+                        var row = tblRoles.rows(tr);
+                        var role = row.data()[0];
+                        var roleID = row.data()[0].roleID;
+                        var roleName = row.data()[0].roleName;
+
+                        if (action == "Edit") {
+                            e.preventDefault();
+                            $.ajax({
+                                type: "POST",
+                                url: "/Role/EditRole",
+                                data: role,
+                                success: function (response) {
+                                    $('#dialog-view').html(response);
+                                    $("#dialog-view").dialog({
+                                        title: "Edit Role",
+                                        resizable: false,
+                                        height: "auto",
+                                        width: 400,
+                                        modal: true
+                                    });
+
+                                    $('#btnSaveExistingRole').click(function (event) {
+
+                                        event.preventDefault();
+                                        var RoleID = $("#RoleID").val();
+                                        var RoleName = $("#RoleName").val();
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "/Role/SaveRole",
+                                            data: { RoleID: RoleID, RoleName: RoleName },
+
+                                            success: function (data) {
+                                                $("#dialog").dialog("close");
+                                                LoadRoleData();
+                                                toastr.success('Role ' + RoleName + ' is Updated', 'Confirmation');
+                                            },
+                                            error: function (ex) {
+                                                alert('in error');
+                                            }
+                                        })
+                                    })
+
+                                },
+                                failure: function (response) {
+                                    alert(response.responseText);
+                                },
+                                error: function (response) {
+                                    alert(response.responseText);
+                                }
+                            });
+                        }
+                        else if (action == "Delete") {
+                            
+                            e.preventDefault();
+
+                            $("#dialog-confirm").html("<i style='color: red;' class='bi bi-exclamation-circle-fill'></i>&nbsp;&nbsp;Are you sure to delete the selected Role?");
+                            $("#dialog-confirm").dialog({
+                                title: "Delete the role '" + roleName + "'",
+                                resizable: false,
+                                height: "auto",
+                                width: 400,
+                                modal: true,
+                                buttons: {
+                                    "Yes": function () {
+                                        $.ajax({
+                                            type: "POST",
+                                            url: "/Role/DeleteRole?RoleId=" + roleID,
+                                            success: function (response) {
+                                                $("#dialog-confirm").dialog("close");
+                                                LoadRoleData();
+                                                toastr.success('Role ' + roleName + ' is Deleted', 'Confirmation');
+                                            },
+                                            failure: function (response) {
+                                                alert(response.responseText);
+                                            },
+                                            error: function (response) {
+                                                alert(response.responseText);
+                                            }
+                                        });
+                                    },
+                                    "No": function () {
+                                        $("#dialog-confirm").dialog("close");
+                                    }
+                                }
+                            });
+                        }
+                    });
+                },
+                error: function (ex) {
+                    alert('in error');
+                }
+            });
+        }
+    </script>
+}
+
+

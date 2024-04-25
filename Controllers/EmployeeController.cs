@@ -77,6 +77,29 @@ namespace HCM.Controllers
                 ViewData = new ViewDataDictionary<EmployeeBenefitsModel>(ViewData, empBenefit)
             };
         }
+        public PartialViewResult ViewPTO([FromQuery] int employeeId)
+        {
+            PTOModel empPTO = _employeeService.GetEmployeePTODetails(employeeId);
+
+            return new PartialViewResult
+            {
+                ViewName = "ViewPTO",
+                ViewData = new ViewDataDictionary<PTOModel>(ViewData, empPTO)
+            };
+        }
+
+        public PartialViewResult ViewSkills([FromQuery] int employeeId)
+        {
+            var skillsObj = _employeeService.GetAllSkillsandEmployeeSkills(employeeId);
+
+            SkillsModel skills = new SkillsModel() { AllSkills = skillsObj.AllSkills, EmployeeSkills = skillsObj.EmployeeSkills };
+
+            return new PartialViewResult
+            {
+                ViewName = "ViewSkills",
+                ViewData = new ViewDataDictionary<SkillsModel>(ViewData, skills)
+            };
+        }
 
         #endregion
 
@@ -113,6 +136,19 @@ namespace HCM.Controllers
         public JsonResult SaveBenefits(EmployeeBenefitsModel benefits)
         {
             return Json(_employeeService.SaveBenefits(benefits));
+        }
+
+        [HttpPost]
+        public JsonResult SaveEmployeeSkills(SkillsModel skills)
+        {
+            int employeeId = int.Parse(HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
+            return Json(_employeeService.SaveEmployeeSkills(skills, employeeId));
+        }
+        [HttpPost]
+        public JsonResult SavePTO(PTOModel pto)
+        {
+            int employeeId = int.Parse(HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
+            return Json(_employeeService.ApplyPTO(pto, employeeId));
         }
 
         #endregion
@@ -158,7 +194,6 @@ namespace HCM.Controllers
                             });
             return Json(managers);
         }
-
-#endregion
+        #endregion
     }
 }

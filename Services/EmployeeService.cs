@@ -2,6 +2,7 @@
 using HCM.Models;
 using HCM.Services.Interfaces;
 using HCM.Utilities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MySql.Data.MySqlClient;
 using Mysqlx.Datatypes;
 using System.Collections.Generic;
@@ -149,13 +150,13 @@ namespace HCM.Services
             }
             return employee;
         }
-        public int DeleteEmployee(int employeeID)
+        public int DeleteEmployee(int employeeId)
         {
             var result = 0;
 
             var parameters = new Dictionary<string, object>
             {
-                { "EmployeeID", employeeID }
+                { "EmployeeID", employeeId }
             };
 
             var con = GetDatabaseConnection();
@@ -298,5 +299,175 @@ namespace HCM.Services
             }
             return result;
         }
+
+        public SkillsModel GetAllSkillsandEmployeeSkills(int employeeId)
+        {
+            SkillsModel skills = new SkillsModel();
+            skills.AllSkills.Add(new SelectListItem { Text = "-- Available Skills --", Value = "-1", Selected = true });
+            skills.EmployeeSkills.Add(new SelectListItem { Text = "-- Selected Skills --", Value = "-1", Selected = true });
+
+            var con = GetDatabaseConnection();
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetAllSkills);
+            cmd.Connection = con;
+
+            try
+            {
+                con.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var skill = new SelectListItem()
+                    {
+                        Value = reader.GetInt32("SkillId").ToString(),
+                        Text = reader.GetString("SkillName")
+                    };
+                    skills.AllSkills.Add(skill);
+                }
+                reader.Close();
+            }
+            catch (Exception ex) { }
+            finally
+            {
+                con.Close();
+            }
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "EmpID", employeeId }
+            };
+
+            cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetEmployeeSkills, parameters);
+            cmd.Connection = con;
+
+            try
+            {
+                con.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var skill = new SelectListItem()
+                    {
+                        Value = reader.GetInt32("SkillId").ToString(),
+                        Text = reader.GetString("SkillName")
+                    };
+                    skills.EmployeeSkills.Add(skill);
+                }
+                reader.Close();
+            }
+            catch (Exception ex) { }
+            finally
+            {
+                con.Close();
+            }
+            return skills;
+        }
+
+        public int SaveEmployeeSkills(SkillsModel skills, int employeeId)
+        {
+            var result = 0;
+
+            foreach (var skill in skills.EmployeeSkills)
+            {
+                var parameters = new Dictionary<string, object>
+                {
+                    { "EmpSkillID", skill.Value },
+                    { "EmpID", employeeId }
+                };
+
+                var con = GetDatabaseConnection();
+
+                var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.AddEmployeeSkill, parameters);
+                cmd.Connection = con;
+
+                try
+                {
+                    con.Open();
+                    cmd.ExecuteNonQuery();
+                    result = 1;
+                }
+                catch (Exception ex)
+                {
+
+                }
+                finally
+                {
+                    con.Close();
+                }
+            }
+
+            return result;
+        }
+
+        public PTOModel GetEmployeePTODetails(int employeeId)
+        {
+            PTOModel empPTO = null;
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "EmpID", employeeId }
+            };
+
+            var con = GetDatabaseConnection();
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetEmployeePTODetails, parameters);
+            cmd.Connection = con;
+
+            try
+            {
+                con.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    empPTO = new PTOModel()
+                    {
+                        LeaveBalance = reader.IsDBNull("LeaveBalance") ? 0 : reader.GetInt32("LeaveBalance"),
+                        PTOTypeID = reader.IsDBNull("PTOTypeID") ? 0 : reader.GetInt32("PTOTypeID"),
+                        PTOName = reader.IsDBNull("PTOName") ? string.Empty : reader.GetString("PTOName"),
+                        ManagerID = reader.IsDBNull("ManagerID") ? 0 : reader.GetInt32("ManagerID"),
+                        ManagerName = reader.IsDBNull("ManagerName") ? string.Empty : reader.GetString("ManagerName"),
+                    };
+                }
+                reader.Close();
+            }
+            catch (Exception ex) { }
+            finally
+            {
+                con.Close();
+            }
+            return empPTO;
+        }
+
+        public int ApplyPTO(PTOModel pto, int employeeId)
+        {
+            var result = 0;
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "EmpID", employeeId },
+                { "PTOTypeID", pto.PTOTypeID },
+                { "NumDays", pto.NumDays },
+                { "Reason", pto.Reason }
+            };
+
+            var con = GetDatabaseConnection();
+
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.UpdateEmployeeBenefits, parameters);
+            cmd.Connection = con;
+
+            try
+            {
+                con.Open();
+                return cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                con.Close();
+            }
+            return result;
+        }
     }
 }
+
