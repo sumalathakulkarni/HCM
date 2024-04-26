@@ -50,10 +50,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Departments">Departments</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Skills">Skills</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Skill" asp-action="Skills">Skills</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto">
@@ -65,8 +62,8 @@
                             <ul class="dropdown-menu">
                                 <li><a href="/Employee/EditEmployee?employeeID=@userEmployeeID" class="btn btn-sm" role="button" title="Edit Details" name="Edit" id="Edit"><i class="bi bi-pencil"></i>&nbsp;&nbsp;Profile</a></li>
                                 <li><a href="#" class="btn btn-sm" role="button" title="Choose Benefits" name="btnEditBenefits" id="btnEditBenefits"><i class="bi bi-list-task"></i>&nbsp;&nbsp;Benefits</a></li>
-                                <li><a href="#" class="btn btn-sm" role="button" title="View PTO" name="btnViewPTO" id="btnViewPTO"><i class="bi bi-list-task"></i>&nbsp;&nbsp;View PTO</a></li>
-                                <li><a href="#" class="btn btn-sm" role="button" title="My Skills" name="btnViewSkills" id="btnViewSkills"><i class="bi bi-list-task"></i>&nbsp;&nbsp;My Skills</a></li>
+                                <li><a href="#" class="btn btn-sm" role="button" title="View PTO" name="btnViewPTO" id="btnViewPTO"><i class="bi bi-airplane-fill"></i>&nbsp;&nbsp;View/ Apply PTO</a></li>
+                                <li><a href="#" class="btn btn-sm" role="button" title="My Skills" name="btnViewSkills" id="btnViewSkills"><i class="bi bi-tools"></i>&nbsp;&nbsp;My Skills</a></li>
                                 <li><a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a></li>
                             </ul>
                         </li>
@@ -96,9 +93,9 @@
     <script src="~/lib/toastr.js/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
-
 
 
 <script type="text/javascript">
@@ -127,9 +124,6 @@
                         });
 
                         $('#btnSaveBenifits').click(function (event) {
-                            //var status = ($("#status").attr("checked") ? 'checked' : 'unchecked');
-                            //$("#checkbox-1").is(":checked")
-                            //$("#checkbox-1").prop("checked")
 
                             var EmployeeMedical = $("#EmployeeMedical").prop("checked");
                             var EmployeeVision = $("#EmployeeVision").prop("checked");
@@ -170,17 +164,18 @@
                     }
                 });
             });
+
             $('#btnViewSkills').click(function (e) {
                 var employeeID = $("#hdnEmployeeID").val();
                 e.preventDefault();
 
                 $.ajax({
                     type: "GET",
-                    url: "/Employee/MySkills?employeeID=" + employeeID,
+                    url: "/Employee/EmployeeSkills?employeeID=" + employeeID,
                     success: function (response) {
                         $('#dialog-view').html(response);
                         $("#dialog-view").dialog({
-                            title: "View Skills",
+                            title: "My Skills",
                             resizable: false,
                             height: "auto",
                             width: "auto",
@@ -188,6 +183,7 @@
                         });
 
                         $('#btnAddSkill').click(function (e) {
+                            debugger;
                             var selectedOpts = $('#AllSkills option:selected');
                             if (selectedOpts.length > 0 && selectedOpts[0].value != -1) {
                                 $('#EmployeeSkills').append($(selectedOpts).clone());
@@ -244,6 +240,7 @@
                     }
                 });
             });
+
             $('#btnViewPTO').click(function (e) {
                 var employeeID = $("#hdnEmployeeID").val();
                 e.preventDefault();
@@ -259,28 +256,55 @@
                             height: "auto",
                             width: 500,
                             modal: true
-
                         });
-                        $('#btnApplyPTO').click(function (event) {
 
-                            var PTOTypeID = $("#PTOTypeID").val();
+                        function CalculatePTOCount() {
+                            var start = $('#PTOStartDate').datepicker('getDate');
+                            var end = $('#PTOEndDate').datepicker('getDate');
+                            if (!start || !end)
+                                return;
+                            var days = 1 + (end - start) / 1000 / 60 / 60 / 24;
+                            $("#NumDays").val(days);
+                        }
+
+                        $("#PTOStartDate").datepicker({ dateFormat: 'dd-mm-yy', onSelect: CalculatePTOCount });
+                        $("#PTOEndDate").datepicker({ dateFormat: 'dd-mm-yy', onSelect: CalculatePTOCount });
+
+                        $("#empPTOForm").on("submit", function (event) {
+                            debugger;
+                            var PTOTypeID = $("#AllPTOTypes").val();
+                            var ManagerID = $('#hdnManagerID').val();
+                            var StartDate = $('#PTOStartDate').datepicker('getDate');
+                            var EndDate = $('#PTOEndDate').datepicker('getDate');
+                            CalculatePTOCount();
                             var NumDays = $("#NumDays").val();
                             var Reason = $("#Reason").val();
-
                             event.preventDefault();
+
+                            if (PTOTypeID == -1) {
+                                toastr.error('Select PTO Type', 'PTO Type');
+                                return false;
+                            }
+
+                            if (NumDays < 1) {
+                                toastr.error('End Date should be greater than or Equal to Start Date', 'Error');
+                                return false;
+                            }
 
                             $.ajax({
                                 type: "POST",
                                 url: "/Employee/SavePTO",
                                 data: {
                                     PTOTypeID: PTOTypeID,
+                                    ManagerID: ManagerID,
+                                    StartDate: StartDate.toDateString(),
+                                    EndDate: EndDate.toDateString(),
                                     NumDays: NumDays,
                                     Reason: Reason
                                 },
 
                                 success: function (data) {
                                     $("#dialog-view").dialog("close");
-                                    LoadDepartmentData();
                                     toastr.success('PTO request submitted successfully', 'Confirmation');
                                 },
                                 error: function (ex) {
@@ -288,6 +312,7 @@
                                 }
                             })
                         })
+
                     },
                     failure: function (response) {
                         alert(response.responseText);
@@ -300,3 +325,4 @@
         });
     });
 </script>
+

@@ -2,11 +2,11 @@
 
 namespace HCM.Models
 {
-    public class SkillsModel
+    public class EmpSkillsModel
     {
         public List<SelectListItem> AllSkills { get; set; }
         public List<SelectListItem> EmployeeSkills { get; set; }
-        public SkillsModel()
+        public EmpSkillsModel()
         {
             AllSkills = new List<SelectListItem>();
             EmployeeSkills = new List<SelectListItem>();

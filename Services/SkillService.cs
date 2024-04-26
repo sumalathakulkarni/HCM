@@ -8,14 +8,14 @@ using System.Data;
 
 namespace HCM.Services
 {
-    public class RoleService : DBServiceBase, IRoleService
+    public class SkillService : DBServiceBase, ISkillService
     {
-        public RoleService(IConfiguration configuration) : base(configuration) { }
-        public IList<RoleModel> GetAllRoles()
+        public SkillService(IConfiguration configuration) : base(configuration) { }
+        public IList<SkillModel> GetAllSkills()
         {
-            var Roles = new List<RoleModel>();
+            var Skills = new List<SkillModel>();
             var con = GetDatabaseConnection();
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetAllRoles);
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetAllSkills);
             cmd.Connection = con;
             try
             {
@@ -23,12 +23,12 @@ namespace HCM.Services
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    RoleModel role = new RoleModel()
+                    SkillModel skill = new SkillModel()
                     {
-                        RoleID = reader.GetInt32("RoleID"),
-                        RoleName = reader.GetString("RoleName"),
+                        SkillID = reader.GetInt32("SkillID"),
+                        SkillName = reader.GetString("SkillName"),
                     };
-                    Roles.Add(role);
+                    Skills.Add(skill);
                 }
                 reader.Close();
             }
@@ -37,20 +37,27 @@ namespace HCM.Services
             {
                 con.Close();
             }
-            return Roles;
+            return Skills;
         }
 
-        public int DeleteRole(int RoleID)
+        public int SaveSkill(SkillModel skill)
         {
             var result = 0;
 
             var parameters = new Dictionary<string, object>
             {
-                { "RoleID", RoleID }
+                { "skillName", skill.SkillName }
             };
 
             var con = GetDatabaseConnection();
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.DeleteRole, parameters);
+
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.AddSkill, parameters);
+            if (skill.SkillID != 0)
+            {
+                parameters.Add("SID", skill.SkillID);
+                cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.UpdateSkillName, parameters);
+            }
+
             cmd.Connection = con;
 
             try
@@ -68,25 +75,17 @@ namespace HCM.Services
             }
             return result;
         }
-
-        public int SaveRole(RoleModel role)
+        public int DeleteSkill(int SkillID)
         {
             var result = 0;
 
             var parameters = new Dictionary<string, object>
             {
-                { "RoleName", role.RoleName }
+                { "SID", SkillID }
             };
 
             var con = GetDatabaseConnection();
-
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.AddRole, parameters);
-            if (role.RoleID != 0)
-            {
-                parameters.Add("RID", role.RoleID);
-                cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.UpdateRoleName, parameters);
-            }
-
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.DeleteSkill, parameters);
             cmd.Connection = con;
 
             try

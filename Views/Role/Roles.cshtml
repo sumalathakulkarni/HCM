@@ -35,8 +35,8 @@
 
         $(document).ready(function () {
             $(function () {
-                var bootstrapButton = $.fn.button.noConflict()
-                $.fn.bootstrapBtn = bootstrapButton;
+                // var bootstrapButton = $.fn.button.noConflict();
+                // $.fn.bootstrapBtn = bootstrapButton;
                 LoadRoleData();
             });
         });
@@ -113,7 +113,7 @@
                                         data: { RoleID: RoleID, RoleName: RoleName },
 
                                         success: function (data) {
-                                            $("#dialog").dialog("close");
+                                            $("#dialog-view").dialog("close");
                                             LoadRoleData();
                                             toastr.success('Role ' + RoleName + ' is Created', 'Confirmation');
                                         },
@@ -133,10 +133,8 @@
                     });
 
                     $("#tblRoles").on("click", ".btn-row", function (e) {
-                    //$('#tblRoles').find('a').click(function (e) {
 
                         var action = $(this).attr("Name");
-
                         var tr = $(this).closest('tr');
                         var row = tblRoles.rows(tr);
                         var role = row.data()[0];

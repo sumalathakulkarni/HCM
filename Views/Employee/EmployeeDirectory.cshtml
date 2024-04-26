@@ -42,8 +42,8 @@
 
         $(document).ready(function () {
             $(function () {
-                var bootstrapButton = $.fn.button.noConflict()
-                $.fn.bootstrapBtn = bootstrapButton;
+                // var bootstrapButton = $.fn.button.noConflict()
+                // $.fn.bootstrapBtn = bootstrapButton;
                 LoadEmployeeData();
             });
         });
@@ -155,6 +155,7 @@
                                 url: "/Employee/ViewEmployee?employeeID=" + employeeID,
                                 success: function (response) {
                                     $('#dialog-view').html(response);
+                                    
                                     $("#dialog-view").dialog({
                                         title: "View Details",
                                         resizable: false,
@@ -185,6 +186,7 @@
                                 url: "/Employee/ViewBenefits?employeeID=" + employeeID,
                                 success: function (response) {
                                     $('#dialog-view').html(response);
+                                    
                                     $("#dialog-view").dialog({
                                         title: "View Benefits",
                                         resizable: false,
@@ -211,6 +213,7 @@
                             e.preventDefault();
 
                             $("#dialog-confirm").html("<i style='color: red;' class='bi bi-exclamation-circle-fill'></i>&nbsp;&nbsp;Are you sure to delete the selected Employee?");
+                            
                             $("#dialog-confirm").dialog({
                                 title: "Delete " + name,
                                 resizable: false,

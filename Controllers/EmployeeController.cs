@@ -88,16 +88,16 @@ namespace HCM.Controllers
             };
         }
 
-        public PartialViewResult ViewSkills([FromQuery] int employeeId)
+        public PartialViewResult EmployeeSkills([FromQuery] int employeeId)
         {
             var skillsObj = _employeeService.GetAllSkillsandEmployeeSkills(employeeId);
 
-            SkillsModel skills = new SkillsModel() { AllSkills = skillsObj.AllSkills, EmployeeSkills = skillsObj.EmployeeSkills };
+            EmpSkillsModel skills = new EmpSkillsModel() { AllSkills = skillsObj.AllSkills, EmployeeSkills = skillsObj.EmployeeSkills };
 
             return new PartialViewResult
             {
-                ViewName = "ViewSkills",
-                ViewData = new ViewDataDictionary<SkillsModel>(ViewData, skills)
+                ViewName = "EmployeeSkills",
+                ViewData = new ViewDataDictionary<EmpSkillsModel>(ViewData, skills)
             };
         }
 
@@ -139,7 +139,7 @@ namespace HCM.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveEmployeeSkills(SkillsModel skills)
+        public JsonResult SaveEmployeeSkills(EmpSkillsModel skills)
         {
             int employeeId = int.Parse(HttpContext.User.FindFirstValue(ClaimTypes.SerialNumber));
             return Json(_employeeService.SaveEmployeeSkills(skills, employeeId));

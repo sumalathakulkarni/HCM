@@ -8,6 +8,7 @@ using Mysqlx.Datatypes;
 using System.Collections.Generic;
 using System.Data;
 using System.Net.Mail;
+using System.Runtime.Serialization;
 
 namespace HCM.Services
 {
@@ -300,9 +301,9 @@ namespace HCM.Services
             return result;
         }
 
-        public SkillsModel GetAllSkillsandEmployeeSkills(int employeeId)
+        public EmpSkillsModel GetAllSkillsandEmployeeSkills(int employeeId)
         {
-            SkillsModel skills = new SkillsModel();
+            EmpSkillsModel skills = new EmpSkillsModel();
             skills.AllSkills.Add(new SelectListItem { Text = "-- Available Skills --", Value = "-1", Selected = true });
             skills.EmployeeSkills.Add(new SelectListItem { Text = "-- Selected Skills --", Value = "-1", Selected = true });
 
@@ -351,6 +352,7 @@ namespace HCM.Services
                         Text = reader.GetString("SkillName")
                     };
                     skills.EmployeeSkills.Add(skill);
+                    skills.AllSkills.Remove(skills.AllSkills.First<SelectListItem>(sk => sk.Value == skill.Value));
                 }
                 reader.Close();
             }
@@ -362,7 +364,7 @@ namespace HCM.Services
             return skills;
         }
 
-        public int SaveEmployeeSkills(SkillsModel skills, int employeeId)
+        public int SaveEmployeeSkills(EmpSkillsModel skills, int employeeId)
         {
             var result = 0;
 
@@ -398,9 +400,42 @@ namespace HCM.Services
             return result;
         }
 
+        private List<SelectListItem> GetAllPTOTypes()
+        {
+            var allPTOTypes = new List<SelectListItem>();
+            allPTOTypes.Add(new SelectListItem { Text = "-- PTO Type --", Value = "-1", Selected = true });
+
+            var con = GetDatabaseConnection();
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetAllPTOTypes);
+            cmd.Connection = con;
+
+            try
+            {
+                con.Open();
+                var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var skill = new SelectListItem()
+                    {
+                        Value = reader.GetInt32("PTOTypeID").ToString(),
+                        Text = reader.GetString("PTOTypeName")
+                    };
+                    allPTOTypes.Add(skill);
+                }
+                reader.Close();
+
+            }
+            catch (Exception ex) { }
+            finally
+            {
+                con.Close();
+            }
+
+            return allPTOTypes;
+        }
         public PTOModel GetEmployeePTODetails(int employeeId)
         {
-            PTOModel empPTO = null;
+            PTOModel empPTO = new PTOModel();
 
             var parameters = new Dictionary<string, object>
             {
@@ -420,8 +455,6 @@ namespace HCM.Services
                     empPTO = new PTOModel()
                     {
                         LeaveBalance = reader.IsDBNull("LeaveBalance") ? 0 : reader.GetInt32("LeaveBalance"),
-                        PTOTypeID = reader.IsDBNull("PTOTypeID") ? 0 : reader.GetInt32("PTOTypeID"),
-                        PTOName = reader.IsDBNull("PTOName") ? string.Empty : reader.GetString("PTOName"),
                         ManagerID = reader.IsDBNull("ManagerID") ? 0 : reader.GetInt32("ManagerID"),
                         ManagerName = reader.IsDBNull("ManagerName") ? string.Empty : reader.GetString("ManagerName"),
                     };
@@ -433,6 +466,9 @@ namespace HCM.Services
             {
                 con.Close();
             }
+
+            empPTO.AllPTOTypes = GetAllPTOTypes();
+
             return empPTO;
         }
 
@@ -444,13 +480,16 @@ namespace HCM.Services
             {
                 { "EmpID", employeeId },
                 { "PTOTypeID", pto.PTOTypeID },
+                { "StartDate", pto.StartDate.ToString("yyyy-MM-dd") },
+                { "EndDate", pto.EndDate.ToString("yyyy-MM-dd") },
                 { "NumDays", pto.NumDays },
-                { "Reason", pto.Reason }
+                { "Reason", pto.Reason },
+                { "ManagerID", pto.ManagerID}
             };
 
             var con = GetDatabaseConnection();
 
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.UpdateEmployeeBenefits, parameters);
+            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.ApplyPTO, parameters);
             cmd.Connection = con;
 
             try

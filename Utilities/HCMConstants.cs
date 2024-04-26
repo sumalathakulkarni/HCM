@@ -34,10 +34,16 @@
         public static string UpdateRoleName = "UpdateRoleName";
 
         public static string GetAllSkills = "GetAllSkills";
+        public static string GetSkillByID = "GetSkillByID";
+        public static string DeleteSkill = "DeleteSkill";
+        public static string AddSkill = "AddNewSkill";
+        public static string UpdateSkillName = "UpdateSkillName";
+
         public static string GetEmployeeSkills = "GetEmployeeSkills";
         public static string AddEmployeeSkill = "AddEmployeeSkill";
 
         public static string GetEmployeePTODetails = "GetEmployeePTODetails";
+        public static string GetAllPTOTypes = "GetAllPTOTypes";
         public static string ApplyPTO = "ApplyPTO";
 
 

@@ -1,0 +1,24 @@
+﻿@model SkillModel
+
+@{
+    ViewData["Title"] = "Edit Skill";
+}
+
+<div class="container-fluid">
+    <form id="frmEditRole" class="row g-3">
+        <div class="col-md-6">
+            <label for="SkillID" class="form-label">Skill ID</label>
+            <input type="text" class="form-control" id="SkillID" value="@Model.SkillID" readonly style="background-color:lightgray" />
+        </div>
+        <div class="col-md-6">
+            <label for="SkillName" class="form-label">Skill Name</label>
+            <input type="text" class="form-control" id="SkillName" value="@Model.SkillName" required />
+            <div class="valid-feedback">
+                Looks good!
+            </div>
+        </div>
+        <div class="col-12 align-content-center">
+            <button type="button" id="btnSaveExistingSkill" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;&nbsp;Save</button>
+        </div>
+    </form>
+</div>

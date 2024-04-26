@@ -12,6 +12,7 @@ builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IDepartmentService, DepartmentService>();
 builder.Services.AddSingleton<IRoleService, RoleService>();
+builder.Services.AddSingleton<ISkillService, SkillService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 var app = builder.Build();

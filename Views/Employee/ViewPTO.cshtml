@@ -5,32 +5,38 @@
 }
 
 <div class="container-fluid">
-    <form id="empForm" class="row g-3 needs-validation">
+    <form id="empPTOForm" class="row g-3 needs-validation">
         <div class="col-md-4">
             <label for="LeaveBalance" class="form-label">PTO Balance</label>
             <input type="text" class="form-control" id="LeaveBalance" name="LeaveBalance" value="@Model.LeaveBalance" readonly style="background-color:lightgray" />
         </div>
         <div class="col-md-4">
             <label for="PTOTypeID" class="form-label">PTO Type</label>
-            <select id="PTOTypeID" class="form-select" name="PTOTypeID">
-                <option selected>Choose...</option>
-                <option>...</option>
-            </select>
+            @Html.DropDownListFor(m => m.AllPTOTypes, new SelectList(@Model.AllPTOTypes, "Value", "Text"))
         </div>
         <div class="col-md-4">
-            <label for="ManagerID" class="form-label">Manager</label>
+            <label for="txtManager" class="form-label">Manager</label>
+            <input type="hidden" id="hdnManagerID" value="@Model.ManagerID" />
             <input type="text" class="form-control" id="txtManager" name="txtManager" value="@Model.ManagerName" readonly style="background-color:lightgray" />
         </div>
         <div class="col-md-6">
+            <label for="PTOStartDate" class="form-label">Start Date</label>
+            <input type="text" class="form-control" id="PTOStartDate" name="PTOStartDate" required>
+        </div>
+        <div class="col-md-6">
+            <label for="PTOEndDate" class="form-label">End Date</label>
+            <input type="text" class="form-control" id="PTOEndDate" name="PTOEndDate" required />
+        </div>
+        <div class="col-md-6">
             <label for="NumDays" class="form-label">Number of Days</label>
-            <input type="number" class="form-control" id="NumDays" name="NumDays" required>
+            <input type="number" class="form-control" id="NumDays" name="NumDays" required readonly style="background-color:lightgray">
         </div>
         <div class="col-md-6">
             <label for="Reason" class="form-label">Reason</label>
-            <input type="text" class="form-control" id="Reason" name="Reason" />
+            <input type="text" class="form-control" id="Reason" name="Reason" required />
         </div>
         <div class="col-12 align-content-center">
-            <button type="button" id="btnApplyPTO" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;&nbsp;Apply</button>
+            <button type="submit" id="btnApplyPTO" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;&nbsp;Apply</button>
         </div>
     </form>
 </div>

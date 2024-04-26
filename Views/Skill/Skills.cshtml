@@ -1,26 +1,26 @@
 ﻿@{
-    ViewData["Title"] = "Roles";
+    ViewData["Title"] = "Skills";
 }
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item active">Roles</li>
+        <li class="breadcrumb-item active">Skills</li>
     </ol>
 </nav>
 <div class="container-fluid">
     <div class="alert alert-success" role="alert">
-        <button type="button" id="btnAddRole" class="btn btn-primary"><i class="bi bi-plus-square-fill"></i>&nbsp;&nbsp;New Role</button>
+        <button type="button" id="btnAddNewSkill" class="btn btn-primary"><i class="bi bi-plus-square-fill"></i>&nbsp;&nbsp;New Skill</button>
     </div>
 </div>
 
 <div class="container-fluid">
     <div>
-        <table id="tblRoles" class="table table-striped table-hover" style="width:100%">
+        <table id="tblSkills" class="table table-striped table-hover" style="width:100%">
             <thead>
                 <tr>
-                    <th>Role ID</th>
-                    <th>Role Name</th>
+                    <th>Skill ID</th>
+                    <th>Skill Name</th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -35,23 +35,23 @@
 
         $(document).ready(function () {
             $(function () {
-                var bootstrapButton = $.fn.button.noConflict()
-                $.fn.bootstrapBtn = bootstrapButton;
-                LoadRoleData();
+                // var bootstrapButton = $.fn.button.noConflict();
+                // $.fn.bootstrapBtn = bootstrapButton;
+                LoadSkillsData();
             });
         });
 
-        function LoadRoleData() {
+        function LoadSkillsData() {
 
             $.ajax({
                 "type": "GET",
-                "url": "/Role/GetAllRoles",
+                "url": "/Skill/GetAllSkills",
                 contentType: "application/json; charset=utf-8",
                 datatype: "json",
 
                 success: function (data) {
 
-                    tblRoles = $("#tblRoles").DataTable({
+                    tblSkills = $("#tblSkills").DataTable({
                         "data": data,
                         scrollY: '400px',
                         scrollCollapse: true,
@@ -60,13 +60,13 @@
                         "columnDefs": [
                             {
                                 "targets": [0],
-                                "data": "roleID",
+                                "data": "skillID",
                                 "searchable": false,
                                 "orderable": false,
                             },
                             {
                                 "targets": [1],
-                                "data": "roleName",
+                                "data": "skillName",
                                 "className": "dt-left"
                             },
                             {
@@ -86,36 +86,36 @@
                         ]
                     });
 
-                    $('#btnAddRole').click(function (e) {
+                    $('#btnAddNewSkill').click(function (e) {
                         
                         e.preventDefault();
                         $.ajax({
                             type: "GET",
-                            url: "/Role/AddRole",
+                            url: "/Skill/AddSkill",
                             success: function (response) {
                                 $('#dialog-view').html(response);
                                 $("#dialog-view").dialog({
-                                    title: "Add Role",
+                                    title: "Add Skill",
                                     resizable: false,
                                     height: "auto",
                                     width: 400,
                                     modal: true
                                 });
 
-                                $('#btnSaveNewRole').click(function (event) {
+                                $('#btnSaveNewSkill').click(function (event) {
 
                                     event.preventDefault();
-                                    var RoleID = 0;
-                                    var RoleName = $("#RoleName").val();
+                                    var SkillID = 0;
+                                    var SkillName = $("#SkillName").val();
                                     $.ajax({
                                         type: "POST",
-                                        url: "/Role/SaveRole",
-                                        data: { RoleID: RoleID, RoleName: RoleName },
+                                        url: "/Skill/SaveSkill",
+                                        data: { SkillID: SkillID, SkillName: SkillName },
 
                                         success: function (data) {
-                                            $("#dialog").dialog("close");
-                                            LoadRoleData();
-                                            toastr.success('Role ' + RoleName + ' is Created', 'Confirmation');
+                                            $("#dialog-view").dialog("close");
+                                            LoadSkillsData();
+                                            toastr.success('Skill ' + SkillName + ' is Created', 'Confirmation');
                                         },
                                         error: function (ex) {
                                             alert('in error');
@@ -132,47 +132,46 @@
                         });
                     });
 
-                    $("#tblRoles").on("click", ".btn-row", function (e) {
-                    //$('#tblRoles').find('a').click(function (e) {
+                    $("#tblSkills").on("click", ".btn-row", function (e) {
 
                         var action = $(this).attr("Name");
 
                         var tr = $(this).closest('tr');
-                        var row = tblRoles.rows(tr);
-                        var role = row.data()[0];
-                        var roleID = row.data()[0].roleID;
-                        var roleName = row.data()[0].roleName;
+                        var row = tblSkills.rows(tr);
+                        var skill = row.data()[0];
+                        var skillID = row.data()[0].skillID;
+                        var skillName = row.data()[0].skillName;
 
                         if (action == "Edit") {
                             e.preventDefault();
                             $.ajax({
                                 type: "POST",
-                                url: "/Role/EditRole",
-                                data: role,
+                                url: "/Skill/EditSkill",
+                                data: skill,
                                 success: function (response) {
                                     $('#dialog-view').html(response);
                                     $("#dialog-view").dialog({
-                                        title: "Edit Role",
+                                        title: "Edit Skill",
                                         resizable: false,
                                         height: "auto",
                                         width: 400,
                                         modal: true
                                     });
 
-                                    $('#btnSaveExistingRole').click(function (event) {
-
+                                    $('#btnSaveExistingSkill').click(function (event) {
+                                        debugger;
                                         event.preventDefault();
-                                        var RoleID = $("#RoleID").val();
-                                        var RoleName = $("#RoleName").val();
+                                        var SkillID = $("#SkillID").val();
+                                        var SkillName = $("#SkillName").val();
                                         $.ajax({
                                             type: "POST",
-                                            url: "/Role/SaveRole",
-                                            data: { RoleID: RoleID, RoleName: RoleName },
+                                            url: "/Skill/SaveSkill",
+                                            data: { SkillID: SkillID, SkillName: SkillName },
 
                                             success: function (data) {
-                                                $("#dialog").dialog("close");
-                                                LoadRoleData();
-                                                toastr.success('Role ' + RoleName + ' is Updated', 'Confirmation');
+                                                $("#dialog-view").dialog("close");
+                                                LoadSkillsData();
+                                                toastr.success('Skill ' + SkillName + ' is Updated', 'Confirmation');
                                             },
                                             error: function (ex) {
                                                 alert('in error');
@@ -193,9 +192,9 @@
                             
                             e.preventDefault();
 
-                            $("#dialog-confirm").html("<i style='color: red;' class='bi bi-exclamation-circle-fill'></i>&nbsp;&nbsp;Are you sure to delete the selected Role?");
+                            $("#dialog-confirm").html("<i style='color: red;' class='bi bi-exclamation-circle-fill'></i>&nbsp;&nbsp;Are you sure to delete the selected Skill?");
                             $("#dialog-confirm").dialog({
-                                title: "Delete the role '" + roleName + "'",
+                                title: "Delete the skill '" + skillName + "'",
                                 resizable: false,
                                 height: "auto",
                                 width: 400,
@@ -204,11 +203,11 @@
                                     "Yes": function () {
                                         $.ajax({
                                             type: "POST",
-                                            url: "/Role/DeleteRole?RoleId=" + roleID,
+                                            url: "/Skill/DeleteSkill?SkillId=" + skillID,
                                             success: function (response) {
                                                 $("#dialog-confirm").dialog("close");
-                                                LoadRoleData();
-                                                toastr.success('Role ' + roleName + ' is Deleted', 'Confirmation');
+                                                LoadSkillsData();
+                                                toastr.success('Skill ' + skillName + ' is Deleted', 'Confirmation');
                                             },
                                             failure: function (response) {
                                                 alert(response.responseText);

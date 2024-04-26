@@ -33,12 +33,12 @@ namespace HCM.Controllers
             };
         }
 
-        public PartialViewResult EditRole(RoleModel dept)
+        public PartialViewResult EditRole(RoleModel role)
         {
             return new PartialViewResult
             {
                 ViewName = "EditRole",
-                ViewData = new ViewDataDictionary<RoleModel>(ViewData, dept)
+                ViewData = new ViewDataDictionary<RoleModel>(ViewData, role)
             };
         }
 
@@ -49,9 +49,9 @@ namespace HCM.Controllers
         }
 
         [HttpPost]
-        public JsonResult SaveRole(RoleModel dept)
+        public JsonResult SaveRole(RoleModel role)
         {
-            return Json(_RoleService.SaveRole(dept));
+            return Json(_RoleService.SaveRole(role));
         }
 
         [HttpPost]

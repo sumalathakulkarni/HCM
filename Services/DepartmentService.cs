@@ -40,43 +40,6 @@ namespace HCM.Services
             return departments;
         }
 
-        public DepartmentModel GetDepartmentById(int departmentID)
-        {
-            DepartmentModel department = null;
-
-            var parameters = new Dictionary<string, object>
-            {
-                { "DepartmentID", departmentID }
-            };
-
-            var con = GetDatabaseConnection();
-            var cmd = GetDatabaseCommand(CommandType.StoredProcedure, ProcedureNames.GetDepartmentByID, parameters);
-            cmd.Connection = con;
-
-            try
-            {
-                con.Open();
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    department = new DepartmentModel()
-                    {
-                        DepartmentID = reader.GetInt32("DepartmentID"),
-                        DepartmentName = reader.GetString("DepartmentName"),
-                        EmployeeCount = reader.GetInt32("EmployeeCount")
-                    };
-                }
-                reader.Close();
-            }
-            catch (Exception ex) { }
-            finally
-            {
-                con.Close();
-            }
-
-            return department;
-        }
-
         public int DeleteDepartment(int departmentID)
         {
             var result = 0;
