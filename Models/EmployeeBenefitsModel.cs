@@ -1,5 +1,8 @@
 ﻿namespace HCM.Models
 {
+    /// <summary>
+    /// EmployeeBenefits model object
+    /// </summary>
     public class EmployeeBenefitsModel
     {
         public bool EmployeeMedical { get; set; }

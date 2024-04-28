@@ -14,21 +14,35 @@ using ZstdSharp.Unsafe;
 
 namespace HCM.Controllers
 {
+    /// <summary>
+    /// Controller for the user account (after successful authentication)
+    /// </summary>
     public class AccountController : Controller
     {
+        //User service object instance
         private readonly IUserService _userService;
 
         public AccountController(IUserService userService)
         {
+            //User service object initialization
             _userService = userService;
         }
 
+        /// <summary>
+        /// Responsible for displayng Login View.
+        /// </summary>
+        /// <returns>VIew => Login view</returns>
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
+        /// <summary>
+        /// Authenticates the user with the credentials passed in from the UI 
+        /// </summary>
+        /// <param name="user">email address and password fields set to the user model object from the UI</param>
+        /// <returns>Authenticated User json object</returns>
         public JsonResult Authenticate(UserModel user)
         {
             //Check credentials and assign roles
@@ -56,12 +70,20 @@ namespace HCM.Controllers
             return Json(result);
         }
 
+        /// <summary>
+        /// Logouts the logged-in user
+        /// </summary>
+        /// <returns>(Performs) The action of logging out and releases the claims</returns>
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync();
             return RedirectToAction(nameof(Login));
         }
 
+        /// <summary>
+        /// Occurs when a user tries to gain access witout authentication
+        /// </summary>
+        /// <returns>(Performs) The action of denying access</returns>
         public IActionResult AccessDenied()
         {
             return View();

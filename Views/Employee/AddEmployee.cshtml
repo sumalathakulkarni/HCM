@@ -17,7 +17,7 @@
 </div>
 
 <div class="container-fluid">
-    <form id="myForm" class="row g-3 needs-validation">
+    <form id="frmAddEmployee" class="row g-3 needs-validation">
         <div class="col-md-4">
             <label for="FirstName" class="form-label">First Name</label>
             <input type="text" class="form-control" id="FirstName" name="FirstName" required />
@@ -52,21 +52,21 @@
         </div>
         <div class="col-md-4">
             <label for="DepartmentID" class="form-label">Department</label>
-            <select id="DepartmentID" class="form-select" name="DepartmentID">
+            <select id="DepartmentID" class="form-select" name="DepartmentID" required>
                 <option selected>Choose...</option>
                 <option>...</option>
             </select>
         </div>
         <div class="col-md-4">
             <label for="RoleID" class="form-label">Role</label>
-            <select id="RoleID" class="form-select" name="RoleID">
+            <select id="RoleID" class="form-select" name="RoleID" required>
                 <option selected>Choose...</option>
                 <option>...</option>
             </select>
         </div>
         <div class="col-md-4">
             <label for="ManagerID" class="form-label">Manager</label>
-            <select id="ManagerID" class="form-select" name="ManagerID">
+            <select id="ManagerID" class="form-select" name="ManagerID" required>
                 <option selected>Choose...</option>
                 <option>...</option>
             </select>
@@ -101,72 +101,9 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            $(function () {
-                // var bootstrapButton = $.fn.button.noConflict()
-                // $.fn.bootstrapBtn = bootstrapButton;
-                var controller = 'Employee';
-                LoadDropdown('DepartmentID', controller, 'GetAllDepartments');
-                LoadDropdown('ManagerID', controller, 'GetallManagers');
-                LoadDropdown('RoleID', controller, 'GetAllRoles');
-
-                $("form").on("submit", function (event) {
-                    event.preventDefault();
-                    var emailAddress = $("#EmailAddress").val();
-                    $.ajax({
-                        type: "GET",
-                        url: "/Employee/CheckEmployeeExists?emailAddress=" + emailAddress,
-                        success: function (response) {
-                            if (response.isExisting) {
-                                toastr.error('EmailAddress is already assigned to another employee', 'Invalid Email');
-                                $("#EmailAddress").focus();
-                                return false;
-                            }
-                            else {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/Employee/SaveEmployee",
-                                    data: $("#myForm").serialize(),
-
-                                    success: function (data) {
-                                        toastr.success('Employee ' + $("#FirstName").val() + " " + $("#LastName").val() + ' added successfully!', 'Confirmation');
-                                    },
-                                    error: function (ex) {
-                                        alert('in error');
-                                    }
-                                });
-                            }
-                        },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
-                        }
-                    });
-                });
-            });
+            //Fetches the master data: departments, roles, managers and loads the respective dropdowns 
+            //in the Add New Employee view.
+            HCMModule.InitializeAddEmployee();
         });
-
-        function LoadDropdown(id, controller, operation) {
-
-            $.ajax({
-                "type": "GET",
-                "url": "/" + controller + "/" + operation,
-                contentType: "application/json; charset=utf-8",
-                datatype: "json",
-
-                success: function (data) {
-                    $('#' + id).empty();
-                    $('#' + id).append($('<option>').text('---').attr('value', "-1"));
-
-                    $.each(data, function (index, item) {
-                        $('#' + id).append($('<option>').text(item.text).attr('value', item.value));
-                    });
-                },
-                error: function (ex) {
-                    alert('in error');
-                }
-            });
-        }
     </script>
 }

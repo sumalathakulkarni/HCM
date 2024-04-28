@@ -8,9 +8,17 @@ using System.Data;
 
 namespace HCM.Services
 {
+    /// <summary>
+    /// Service for the Database Service calls for all the REST API calls of the Department module views and functionalities.
+    /// </summary>
     public class DepartmentService : DBServiceBase, IDepartmentService
     {
         public DepartmentService(IConfiguration configuration) : base(configuration) { }
+
+        /// <summary>
+        /// Responsible for retreiving the list of all departments from the database.
+        /// </summary>
+        /// <returns>List of DepartmentModel objects.</returns>
         public IList<DepartmentModel> GetAllDepartments()
         {
             var departments = new List<DepartmentModel>();
@@ -23,12 +31,12 @@ namespace HCM.Services
                 var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    DepartmentModel deapartment = new DepartmentModel()
+                    DepartmentModel department = new DepartmentModel()
                     {
                         DepartmentID = reader.GetInt32("DepartmentID"),
                         DepartmentName = reader.GetString("DepartmentName"),
                     };
-                    departments.Add(deapartment);
+                    departments.Add(department);
                 }
                 reader.Close();
             }
@@ -40,6 +48,11 @@ namespace HCM.Services
             return departments;
         }
 
+        /// <summary>
+        /// Responsible for deleting the selected department from the database.
+        /// </summary>
+        /// <param name="departmentID">DepartmentID of the selected department from the list of departments.</param>
+        /// <returns>result success/ failure</returns>
         public int DeleteDepartment(int departmentID)
         {
             var result = 0;
@@ -69,6 +82,11 @@ namespace HCM.Services
             return result;
         }
 
+        /// <summary>
+        /// Responsible for saving the department details to the database in Add New Department/ Edit Department scenarios.
+        /// </summary>
+        /// <param name="dept">DepartmentModel object with the attributes set from the input field values.</param>
+        /// <returns>result success/ failure</returns>
         public int SaveDepartment(DepartmentModel dept)
         {
             var result = 0;

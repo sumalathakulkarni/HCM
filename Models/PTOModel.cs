@@ -2,6 +2,9 @@
 
 namespace HCM.Models
 {
+    /// <summary>
+    /// EmployeePTO model object
+    /// </summary>
     public class PTOModel
     {
         public int LeaveBalance { get; set; }

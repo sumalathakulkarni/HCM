@@ -16,7 +16,7 @@
     </div>
 </div>
 <div class="container-fluid">
-    <form id="empForm" class="row g-3 needs-validation">
+    <form id="frmEditEmployee" class="row g-3 needs-validation">
         <div class="col-md-4">
             <label for="FirstName" class="form-label">First Name</label>
             <input type="text" class="form-control" id="FirstName" name="FirstName" value=" @Model.FirstName" readonly style="background-color:lightgray" />
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-6">
             <label for="EmailAddress" class="form-label">Employee ID</label>
-            <input type="email" class="form-control" id="EmployeeID" name="EmployeeID" value="@Model.EmployeeID" readonly style="background-color:lightgray"/>
+            <input type="email" class="form-control" id="EmployeeID" name="EmployeeID" value="@Model.EmployeeID" readonly style="background-color:lightgray" />
         </div>
         <div class="col-md-6">
             <label for="EmailAddress" class="form-label">Email Address</label>
@@ -52,28 +52,28 @@
         <div class="col-md-4">
             <label for="ManagerID" class="form-label">Manager</label>
             <input type="hidden" id="hdnManagerID" value="@Model.ManagerID" />
-            <select id="ManagerID" class="form-select" name="ManagerID">
+            <select id="ManagerID" class="form-select" name="ManagerID" required>
             </select>
         </div>
         <div class="col-md-6">
             <label for="Salary" class="form-label">Annual Salary</label>
-            <input type="number" class="form-control" id="Salary" name="Salary" required>
+            <input type="number" class="form-control" id="Salary" name="Salary" value="@Model.Salary"  required>
         </div>
         <div class="col-md-6">
             <label for="BiWeeklyPayAmount" class="form-label">Bi-Weekly Pay Amount</label>
-            <input type="number" class="form-control" id="BiWeeklyPayAmount" name="BiWeeklyPayAmount" />
+            <input type="number" class="form-control" id="BiWeeklyPayAmount" value="@Model.BiWeeklyPayAmount"  name="BiWeeklyPayAmount" />
         </div>
         <div class="col-md-4">
             <label for="BankName" class="form-label">Bank Name</label>
-            <input type="text" class="form-control" id="BankName" name="BankName" />
+            <input type="text" class="form-control" id="BankName" name="BankName" value="@Model.BankName"  />
         </div>
         <div class="col-md-4">
             <label for="AccountNumber" class="form-label">Account Number</label>
-            <input type="text" class="form-control" id="AccountNumber" name="AccountNumber" />
+            <input type="text" class="form-control" id="AccountNumber" name="AccountNumber" value="@Model.AccountNumber" />
         </div>
         <div class="col-md-4">
             <label for="RoutingNumber" class="form-label">Routing Number</label>
-            <input type="text" class="form-control" id="RoutingNumber" name="RoutingNumber" />
+            <input type="text" class="form-control" id="RoutingNumber" name="RoutingNumber" value="@Model.RoutingNumber" />
         </div>
         <div class="col-12 align-content-center">
             <button type="submit" class="btn btn-primary"><i class="bi bi-floppy"></i>&nbsp;&nbsp;Save</button>
@@ -85,57 +85,9 @@
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            $(function () {
-                
-                var controller = 'Employee';
-
-                LoadDropdown('DepartmentID', controller, 'GetAllDepartments');
-                LoadDropdown('ManagerID', controller, 'GetallManagers');
-                LoadDropdown('RoleID', controller, 'GetAllRoles');
-                var data = $("#empForm").serialize();
-
-                $("form").on("submit", function (event) {
-                    event.preventDefault();
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/Employee/SaveEmployee",
-                        data: $("#empForm").serialize(),
-
-                        success: function (data) {
-                            window.location.href = '@Url.Action("EmployeeDirectory", "Employee")'
-                            toastr.success('Employee ' + $("#FirstName").val() + " " + $("#LastName").val() + ' updated successfully!', 'Confirmation');
-                        },
-                        error: function (ex) {
-                            alert('in error');
-                        }
-                    });
-                });
-            });
+            //Fetches the master data: departments, roles, managers and loads the respective dropdowns
+            //in the Edit Employee view.
+            HCMModule.InitializeEditEmployee();
         });
-
-        function LoadDropdown(id, controller, operation) {
-
-            $.ajax({
-                "type": "GET",
-                "url": "/" + controller + "/" + operation,
-                contentType: "application/json; charset=utf-8",
-                datatype: "json",
-
-                success: function (data) {
-                    $('#' + id).empty();
-                    $('#' + id).append($('<option>').text('---').attr('value', "-1"));
-
-                    $.each(data, function (index, item) {
-                        $('#' + id).append($('<option>').text(item.text).attr('value', item.value));
-                    });
-                    var selectedValue = $('#hdn' + id).val();
-                    $('#' + id).val(selectedValue);
-                },
-                error: function (ex) {
-                    alert('in error');
-                }
-            });
-        }
     </script>
 }

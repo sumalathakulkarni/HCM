@@ -8,9 +8,17 @@ using System.Data;
 
 namespace HCM.Services
 {
+    /// <summary>
+    /// Service for the Database Service calls for all the REST API calls of the Role module views and functionalities.
+    /// </summary>
     public class RoleService : DBServiceBase, IRoleService
     {
         public RoleService(IConfiguration configuration) : base(configuration) { }
+
+        /// <summary>
+        /// Responsible for retrieving the list of all roles from the database.
+        /// </summary>
+        /// <returns>List of RoleModel objects.</returns>
         public IList<RoleModel> GetAllRoles()
         {
             var Roles = new List<RoleModel>();
@@ -40,6 +48,11 @@ namespace HCM.Services
             return Roles;
         }
 
+        /// <summary>
+        /// Responsible for deleting a specific Role record from the database.
+        /// </summary>
+        /// <param name="RoleID">RoleID of the specific role.</param>
+        /// <returns>result success/ failure</returns>
         public int DeleteRole(int RoleID)
         {
             var result = 0;
@@ -69,6 +82,11 @@ namespace HCM.Services
             return result;
         }
 
+        /// <summary>
+        /// Responsible for saving the Role details to the database in the Add New Role/ Edit Role scenarios.
+        /// </summary>
+        /// <param name="role">RoleModel object with the attribute values set from the input field values from the UI.</param>
+        /// <returns>result success/ failure</returns>
         public int SaveRole(RoleModel role)
         {
             var result = 0;

@@ -2,8 +2,8 @@
 {
     public class HCMConstants
     {
-        public static string DBConnectionStringSetting = "HCMDatabaseConnection";
-        
+        //MySQL Database connectionstring item in the appsettings.json file.
+        public static string DBConnectionStringSetting = "HCMDatabaseConnection";   
     }
 
     public class ProcedureNames
@@ -12,6 +12,7 @@
         public static string ValidateCredentials = "ValidateCredentials";
 
         #region EMPLOYEE related stored-procs
+        //EMPLOYEE related stored-procs
         public static string GetAllEmployees = "GetAllEmployees";
         public static string GetEmployeeByID = "GetEmployeeByID";
         public static string GetEmployeeByEmailID = "GetEmployeeByEmailID";
@@ -21,11 +22,13 @@
         #endregion
 
         #region Employee Benefits related stored-procs
+        //Employee Benefits related stored-procs
         public static string GetEmployeeBenefits = "GetEmployeeBenefits";
         public static string UpdateEmployeeBenefits = "UpdateEmployeeBenefits";
         #endregion
 
         #region Department related stored-procs
+        //Department related stored-procs
         public static string GetAllDepartments = "GetAllDepartments";
         public static string DeleteDepartment = "DeleteDepartment";
         public static string AddDepartment = "AddNewDepartment";
@@ -33,6 +36,7 @@
         #endregion
 
         #region Role related stored-procs
+        //Role related stored-procs
         public static string GetAllRoles = "GetAllRoles";
         public static string DeleteRole = "DeleteRole";
         public static string AddRole = "AddNewRole";
@@ -40,6 +44,7 @@
         #endregion
 
         #region Skills related stored-procs
+        //Skills related stored-procs
         public static string GetAllSkills = "GetAllSkills";
         public static string DeleteSkill = "DeleteSkill";
         public static string AddSkill = "AddNewSkill";
@@ -47,11 +52,13 @@
         #endregion
 
         #region EmployeeSkills related stored-procs
+        //EmployeeSkills related stored-procs
         public static string GetEmployeeSkills = "GetEmployeeSkills";
         public static string AddEmployeeSkill = "AddEmployeeSkill";
         #endregion
 
         #region Employee PTO related stored-procs
+        //Employee PTO related stored-procs
         public static string GetEmployeePTODetails = "GetEmployeePTODetails";
         public static string GetAllPTOTypes = "GetAllPTOTypes";
         public static string ApplyPTO = "ApplyPTO";

@@ -12,9 +12,17 @@ using System.Runtime.Serialization;
 
 namespace HCM.Services
 {
+    /// <summary>
+    /// Service for the Database Service calls for all the REST API calls of the Employee module views and functionalities.
+    /// </summary>
     public class EmployeeService : DBServiceBase, IEmployeeService
     {
         public EmployeeService(IConfiguration configuration) : base(configuration) { }
+
+        /// <summary>
+        /// Responsible for retrieving the list of all the active employee records from the database.
+        /// </summary>
+        /// <returns>List of EmployeeModel objects</returns>
         public IList<EmployeeModel> GetAllEmployees()
         {
             var employees = new List<EmployeeModel>();
@@ -39,6 +47,11 @@ namespace HCM.Services
                         DepartmentName = reader.IsDBNull("DepartmentName") ? string.Empty : reader.GetString("DepartmentName"),
                         RoleName = reader.IsDBNull("RoleName") ? string.Empty : reader.GetString("RoleName"),
                         Manager = reader.IsDBNull("Manager") ? string.Empty : reader.GetString("Manager"),
+                        Salary = reader.IsDBNull("Salary") ? 0 : reader.GetDouble("Salary"),
+                        BiWeeklyPayAmount = reader.IsDBNull("BiWeeklyPayAmount") ? 0 : reader.GetDouble("BiWeeklyPayAmount"),
+                        BankName = reader.IsDBNull("BankName") ? string.Empty : reader.GetString("BankName"),
+                        AccountNumber = reader.IsDBNull("AccountNumber") ? string.Empty : reader.GetString("AccountNumber"),
+                        RoutingNumber = reader.IsDBNull("RoutingNumber") ? string.Empty : reader.GetString("RoutingNumber")
                     };
                     employees.Add(employee);
                 }
@@ -52,6 +65,11 @@ namespace HCM.Services
             return employees;
         }
 
+        /// <summary>
+        /// Responsible for retrieving a specific employee record from the database.
+        /// </summary>
+        /// <param name="employeeId">EmployeeID of the specific employee</param>
+        /// <returns>EmployeeModel object of the specific employee.</returns>
         public EmployeeModel GetEmployeeByID(int employeeId)
         {
             EmployeeModel employee = null;
@@ -102,6 +120,12 @@ namespace HCM.Services
             return employee;
         }
 
+        /// <summary>
+        /// Responsible for retrieving the employee record of a specific employee 
+        /// having the input emailaddress from the database.
+        /// </summary>
+        /// <param name="EmailAddress"></param>
+        /// <returns>EmployeeModel object of the queried employee</returns>
         public EmployeeModel GetEmployeeByEmail(string EmailAddress)
         {
             EmployeeModel employee = null;
@@ -151,6 +175,12 @@ namespace HCM.Services
             }
             return employee;
         }
+
+        /// <summary>
+        /// Responsible for deleting a specific employee from the database.
+        /// </summary>
+        /// <param name="employeeId"></param>
+        /// <returns>result success/ failure</returns>
         public int DeleteEmployee(int employeeId)
         {
             var result = 0;
@@ -180,6 +210,12 @@ namespace HCM.Services
             return result;
         }
 
+        /// <summary>
+        /// Responsible foe saving the employee details in the "Add New Employee" / "Edit Employee" scenarios.
+        /// </summary>
+        /// <param name="employee">EmployeeModel object 
+        /// with the attribute values set from the input field values from the UI.</param>
+        /// <returns>result success/ failure</returns>
         public int SaveEmployee(EmployeeModel employee)
         {
             var result = 0;
@@ -228,6 +264,12 @@ namespace HCM.Services
             return result;
         }
 
+        /// <summary>
+        /// Responsible for retrieving the specific Employee's benefits' choices already saved from the database.
+        /// </summary>
+        /// <param name="employeeId">EmployeeID of the specific employee.</param>
+        /// <returns>EmployeeBenefitsModel object 
+        /// with the attribute values set to the benefits' choice values retreived from the database.</returns>
         public EmployeeBenefitsModel GetEmployeeBenefits(int employeeId)
         {
             EmployeeBenefitsModel empBenefits = null;
@@ -266,6 +308,12 @@ namespace HCM.Services
             return empBenefits;
         }
 
+        /// <summary>
+        /// Responsible for saving/ updating the logged-in user's benefits' choices to the database.
+        /// </summary>
+        /// <param name="benefits">EmployeeBenefitsModel object 
+        /// with the attributes values set from the input field values from the UI.</param>
+        /// <returns>result success/ failure</returns>
         public int SaveBenefits(EmployeeBenefitsModel benefits)
         {
             var result = 0;
@@ -301,6 +349,12 @@ namespace HCM.Services
             return result;
         }
 
+        /// <summary>
+        /// Responsible for retrieving the list of all skills to choose from and existing employee skills from the database
+        /// to display in the "My Skills" view.
+        /// </summary>
+        /// <param name="employeeId">EmployeeID of the logged-in user.</param>
+        /// <returns></returns>
         public EmpSkillsModel GetAllSkillsandEmployeeSkills(int employeeId)
         {
             EmpSkillsModel skills = new EmpSkillsModel();
@@ -364,6 +418,12 @@ namespace HCM.Services
             return skills;
         }
 
+        /// <summary>
+        /// Responsible for saving/ updating the logged-in user's skills to the database.
+        /// </summary>
+        /// <param name="skills">List of EmpSkillModel object</param>
+        /// <param name="employeeId">EmployeeID of the logged-in user.</param>
+        /// <returns>result success/ failure</returns>
         public int SaveEmployeeSkills(EmpSkillsModel skills, int employeeId)
         {
             var result = 0;
@@ -400,6 +460,10 @@ namespace HCM.Services
             return result;
         }
 
+        /// <summary>
+        /// Responsible for retrieving the list of all PTOType for displaying in the "View/ Apply PTO" view
+        /// </summary>
+        /// <returns>Dropdown list items of PTOType</returns>
         private List<SelectListItem> GetAllPTOTypes()
         {
             var allPTOTypes = new List<SelectListItem>();
@@ -433,6 +497,13 @@ namespace HCM.Services
 
             return allPTOTypes;
         }
+
+        /// <summary>
+        /// Responsible for retrieving the relevant detasil like Manager, LeaveBalance
+        /// for displaying in the "View/ Apply PTO" view.
+        /// </summary>
+        /// <param name="employeeId">EmployeeID of the logged-in user.</param>
+        /// <returns>PTOModel object</returns>
         public PTOModel GetEmployeePTODetails(int employeeId)
         {
             PTOModel empPTO = new PTOModel();
@@ -472,6 +543,12 @@ namespace HCM.Services
             return empPTO;
         }
 
+        /// <summary>
+        /// Responsible for updating the EmployeePaidTimeOff in the database. 
+        /// </summary>
+        /// <param name="pto">PTOModel object with the attributes set from the input field values.</param>
+        /// <param name="employeeId">EmployeeID of the logged-in user.</param>
+        /// <returns>result success/ failure</returns>
         public int ApplyPTO(PTOModel pto, int employeeId)
         {
             var result = 0;

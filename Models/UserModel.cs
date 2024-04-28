@@ -2,6 +2,9 @@
 
 namespace HCM.Models
 {
+    /// <summary>
+    /// (Authenticated) User model object
+    /// </summary>
     public class UserModel
     {
         public int EmployeeID { get; set; }

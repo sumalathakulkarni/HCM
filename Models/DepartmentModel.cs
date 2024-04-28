@@ -1,5 +1,8 @@
 ﻿namespace HCM.Models
 {
+    /// <summary>
+    /// Department model object
+    /// </summary>
     public class DepartmentModel
     {
         public int DepartmentID { get; set; }

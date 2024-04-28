@@ -7,6 +7,10 @@ using System.Diagnostics;
 
 namespace HCM.Controllers
 {
+    /// <summary>
+    /// Controller for the views in the Home module.
+    /// </summary>
+    /// The below tag ensures that only the authenticated user has access to the views under the Home module. 
     [Authorize]
     public class HomeController : Controller
     {

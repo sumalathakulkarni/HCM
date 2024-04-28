@@ -5,12 +5,21 @@ using System.Data;
 
 namespace HCM.Services
 {
+    /// <summary>
+    /// Service for the Database Service calls for all the REST API calls of the (Authenticated) User/ Account module views and functionalities.
+    /// </summary>
     public class UserService : DBServiceBase, IUserService
     {
         public UserService(IConfiguration configuration) : base(configuration)
         {
         }
 
+        /// <summary>
+        /// Responsible for checking if the user with the input credentials exists/ not exists in the database.
+        /// </summary>
+        /// <param name="user">UserModel object with the attributes set to the input field values from the UI.</param>
+        /// <returns>UserModel object with the relevant details:
+        /// a valid (authenticated) user or not, user role attribute values set with the values retrived from database</returns>
         public UserModel ValidateCredentials(UserModel user)
         {
             var parameters = new Dictionary<string, object>

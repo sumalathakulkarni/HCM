@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HCM.Services.Interfaces
 {
+    /// <summary>
+    /// Service Contract for all the REST API calls for the Employee module views and functionalities.
+    /// </summary>
     public interface IEmployeeService
     {
         IList<EmployeeModel> GetAllEmployees();

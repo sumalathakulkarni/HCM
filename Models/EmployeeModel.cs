@@ -1,5 +1,8 @@
 ﻿namespace HCM.Models
 {
+    /// <summary>
+    /// Employee model object
+    /// </summary>
     public class EmployeeModel
     {
         public int EmployeeID { get; set; }
